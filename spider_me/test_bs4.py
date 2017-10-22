@@ -14,8 +14,6 @@ and they lived at the bottom of a well.</p>
 <p class="story">...</p>
 """
 
-#bs4的测试程序
-
 print('*********test1***********************')
 # soup = BeautifulSoup(html_doc, 'html.parser', from_encoding='utf-8')
 soup = BeautifulSoup(html_doc, 'html.parser')  # 因为python3自动设置编码了
