@@ -41,37 +41,36 @@ class HtmlParser(object):
         if html_cont is None:
             print("html count:", html_cont)
             return
-        # soup = BeautifulSoup(html_cont, 'html.parser', from_encoding='utf-8')
         tree = etree.HTML(html_cont)
-        print('tree: ', tree)
-        # /html/body/div[2]/div[2]/div[1]/div[1]
+        # print('tree: ', tree)
         #信息依次为：姓名、作品数、被引量、H指数、供职机构、研究主题
-        print('ddad1')
-        node_XingMing = tree.xpath("//html//body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[2]/dl/dt[@class='writer']/a/span/text()")
-        print('ddad2')
-        ZuoPinShu = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl/dd[@class='data hide3']/span[@class='zps']/text()")
-        print('ddad3', ZuoPinShu)
+        node_XingMing = tree.xpath("//html//body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[2]/dl[1]/dt[@class='writer']/a/span/text()")
+        ZuoPinShu = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl[1]/dd[@class='data hide3']/span[@class='zps']/text()")
         # ZuoPinShu返回的是一个list
         node_ZuoPinShu = ZuoPinShu[0].split(u'：')[1]
-        print('ddad4', node_ZuoPinShu)
-        BeiYinLiang = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl/dd[@class='data hide3']/span[@class='bys']/text()")
-        print('ddad5', BeiYinLiang)
+        BeiYinLiang = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl[1]/dd[@class='data hide3']/span[@class='bys']/text()")
         node_BeiYinLiang = BeiYinLiang[0].split(u'：')[1]
-        print('ddad6')
-        HZhiShu = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl/dd[@class='data hide3']/span[@class='hzs']/text()")
-        print('ddad7')
+        HZhiShu = tree.xpath("//html/body/div[@class='body r3']/div[@class='main']/div[@class='m']/div[@class='search_list type_writer']/dl[1]/dd[@class='data hide3']/span[@class='hzs']/text()")
         node_HZhiShu = HZhiShu[0].split(u'：')[1]
-        print('ddad8')
-        node_GongZhiJiGou = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl//dd[@class='organ hide3 hide2']/span/text()")
-        print('ddad9')
-        node_YanJiuZhuTi = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl//dd[@class='subject hide3 hide2']/text()")
+        # 供职机构存在一些问题：如“史作民 中国林业科学研究院” 搜索会得出很多span，这里仅将span的内容拼接，span之外的没有进行拼接
+        #node_GongZhiJiGou = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl[1]//dd[@class='organ hide3 hide2']/span/text()")
+        GongZhiJiGou1 = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl[1]//dd[@class='organ hide3 hide2']/span/text()")
+        GongZhiJiGouTmp = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl[1]//dd[@class='organ hide3 hide2']/text()")
+        GongZhiJiGou2 = GongZhiJiGouTmp[0].split(u'：')[1]
+        if len(GongZhiJiGou1) != 0:
+            node_GongZhiJiGou = GongZhiJiGou1
+        else:
+            node_GongZhiJiGou = GongZhiJiGou2
+        # print('供职机构1：', GongZhiJiGou1, ' 供职机构2：', GongZhiJiGou2, ' 供职机构: ', node_GongZhiJiGou)
+        YanJiuZhuTi = tree.xpath("//html//body//div[@class='body r3']//div[@class='main']//div[@class='m']//div[@class='search_list type_writer']//dl[1]//dd[@class='subject hide3 hide2']/text()")
+        node_YanJiuZhuTi = YanJiuZhuTi[0].split(u'：')[1]
         print('node_XingMing: ', node_XingMing, "node_ZuoPinShu: ", node_ZuoPinShu, "node_BeiYinLiang: ", node_BeiYinLiang,
               "node_HZhiShu: ", node_HZhiShu, "node_GongZhiJiGou", node_GongZhiJiGou, " node_YanJiuZhuTi: ", node_YanJiuZhuTi)
         res_data['node_XingMing'] = node_XingMing
         res_data['node_ZuoPinShu'] = node_ZuoPinShu
         res_data['node_BeiYinLiang'] = node_BeiYinLiang
         res_data['node_HZhiShu'] = node_HZhiShu
-        res_data['node_GongZhiJiGou'] = node_GongZhiJiGou[0]
+        res_data['node_GongZhiJiGou'] = node_GongZhiJiGou
         res_data['node_YanJiuZhuTi'] = node_YanJiuZhuTi
         return res_data
 
